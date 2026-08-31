@@ -1,0 +1,23 @@
+{
+  "name": "@repo/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/js/tokens.js",
+  "types": "./dist/js/tokens.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/js/tokens.d.ts",
+      "default": "./dist/js/tokens.js"
+    },
+    "./tokens.css": "./dist/css/tokens.css"
+  },
+  "scripts": {
+    "build": "style-dictionary build --config style-dictionary.config.js",
+    "dev": "style-dictionary build --config style-dictionary.config.js --watch",
+    "check-types": "echo 'no TS sources to check in tokens (generated files only)'"
+  },
+  "devDependencies": {
+    "style-dictionary": "^4.4.0"
+  }
+}
