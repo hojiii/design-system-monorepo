@@ -1,0 +1,32 @@
+name: CI
+
+# PR / main push마다 turbo 파이프라인(lint → check-types → build)을 돌린다.
+# version packages PR도 이 체크를 통과해야 merge할 수 있게 하는 게 목적.
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint / types / build
+        run: pnpm turbo run lint check-types build

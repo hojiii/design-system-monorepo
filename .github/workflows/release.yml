@@ -1,0 +1,47 @@
+name: Release
+
+# main에 쌓인 changeset을 감지해서 "chore: version packages" PR을 자동으로 열고/갱신한다.
+# 그 PR을 merge하면 → changeset version 실행 결과(package.json 버전 bump + 각 패키지 CHANGELOG.md)가
+# 다시 main에 커밋된다. npm 배포는 하지 않으므로 publish 단계는 없다.
+
+on:
+  push:
+    branches:
+      - main
+
+# 같은 브랜치에서 이전 실행이 돌고 있으면 취소 (version PR 중복 방지)
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4 # 버전은 package.json의 packageManager에서 읽음
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create Version Packages PR
+        uses: changesets/action@v1
+        with:
+          version: pnpm run version-packages
+          commit: "chore: version packages"
+          title: "chore: version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

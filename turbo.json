@@ -16,6 +16,15 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "storybook": {
+      "dependsOn": ["@repo/tokens#build"],
+      "cache": false,
+      "persistent": true
+    },
+    "build-storybook": {
+      "dependsOn": ["@repo/tokens#build"],
+      "outputs": ["storybook-static/**"]
     }
   }
 }
